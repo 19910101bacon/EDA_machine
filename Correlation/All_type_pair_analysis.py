@@ -1,5 +1,7 @@
 import itertools
 from scipy.stats.stats import pearsonr
+from sklearn import tree
+from sklearn.metrics import accuracy_score
 import re
 import pandas as pd
 
@@ -54,6 +56,20 @@ def Pair_Var_Analysis(Data, Index, Adjust_Var, Target_Var, condition_num, thresh
                 elif (x_var_type == 'Ratio') & (y_var_type == 'Ratio'):
                     try:
                         cor = pearsonr(x_var, y_var)[0]
+                        num = len(x_var)
+                        num_rate = num/Data.shape[0]
+                    except:
+                        cor = 0
+                        num = 0
+                        num_rate = 0
+                elif (x_var_type == 'Ratio') & (y_var_type == 'Nominal'):
+                    try:
+                        X = [[x] for x in x_var]
+                        Y = y_var
+                        clf = tree.DecisionTreeClassifier(max_depth=1)
+                        clf = clf.fit(X, Y)
+                        Y_pred = clf.predict(X)
+                        cor = accuracy_score(Y, Y_pred)
                         num = len(x_var)
                         num_rate = num/Data.shape[0]
                     except:
